@@ -66,11 +66,13 @@
       <div class="row justify-content-md-center"">
         <div class="col-6 col-md-6 justify-content-md-center">
             <div class="btn-group" role="group">
-              <input type="date" name="date" value="{{ data['str_date'] }}">
+              <input type="date" name="picked-date" value="{{ data['str_date'] }}">
               <input type="submit" name="go" value="Go" class="btn btn-primary btn-lg btn-block">
             </div>
             
+            <input type="hidden" name="date" value="{{ data['str_date'] }}">
             <div class="btn-group" role="group">
+              
               <input type="submit" name="previous" value="Previous" class="btn btn-secondary btn-lg btn-block">
               
               <input type="submit" name="today" value="Today" class="btn btn-primary btn-lg btn-block">
