@@ -1,27 +1,58 @@
-from flask import Flask
+from flask import Flask, render_template, request
 from flask_classful import FlaskView, route
 from datetime import date, datetime, timedelta
 from bs4 import BeautifulSoup
 import requests
 import json
 
+
 app = Flask(__name__)
     
 class PanchangamView(FlaskView):
 
+    root_base = "/"
     URL = "https://www.drikpanchang.com/tamil/tamil-month-panchangam.html?geoname-id=4684888&date="
     dataItems = ["Sunrise","Sunset","Nakshathram","Tithi",
                  "Rahu Kalam","Gulikai Kalam","Yamaganda"]
     
+    
+    @route("/",methods=['GET','POST'])
     def index(self):
         
-        return self.dailysheet()
-    
-    
+        if request.method == "GET":
+        
+            self.date = date.today()
+            response_data = self.fetch_data()
+            
+        
+        else:
+            
+            strDate = request.form.get('date')
+            
+            dateValue = datetime.strptime(strDate, "%Y-%m-%d").date()
+            
+            if request.form.get('previous') == "Previous":
+               #  print("previous")
+                self.date = dateValue - timedelta(days=1)
+            elif request.form.get('next') == "Next":
+              #  print("next")
+                self.date = dateValue + timedelta(days=1)
+            elif request.form.get('today') == "Today":
+               # print("today")
+                self.date = date.today()
+            elif request.form.get('go') == "Go":
+               #  print("go")
+                self.date = dateValue
+                    
+            
+            response_data = self.fetch_data()
+            
+            
+        return render_template("index.html", title="Panchangam", data=response_data)
+       
     
     @route("json")
     def dailysheet(self):
-        self.date = date.today()
         
         response_data = self.fetch_data()
         
@@ -50,12 +81,16 @@ class PanchangamView(FlaskView):
         
     def fetch_data(self):
         
+        # self.date = date.today()
+        
         return self.fetch_data_for_date(self.date)
         
     def fetch_data_for_date(self, date):
         
         self.date = date
         dateValue = date.strftime("%d/%m/%Y")
+        
+        dateStr = date.strftime("%Y-%m-%d")
         
         response = {}
         
@@ -65,13 +100,23 @@ class PanchangamView(FlaskView):
 
         self.soup = BeautifulSoup(page.content, "html.parser")
         
-        textCurrentDate = self.date.strftime("%a %b %d, %Y")
+        response["str_date"] = dateStr
         
-        response["current_date"] = textCurrentDate
+        # response["date_text"] = self.date.strftime("%a %b %d, %Y")
+        
+        response["date_text"] = self.date.strftime("%d %b %Y")
+        
+        
+        prevDate = self.date - timedelta(days = 1)
+        nextDate = self.date + timedelta(days = 1)
+        
+        response["prev_date_text"] = prevDate.strftime("%a %b %d, %Y")
+        response["next_date_text"] = nextDate.strftime("%a %b %d, %Y")
+        
         
         divTamilDate = self.soup.find("div", {"class": "dpPHeaderLeftTitle"})
 
-        response["current_date_tamil"]= divTamilDate.text
+        response["date_tamil"]= divTamilDate.text
         
         detailDivs = divTamilDate.find_next_siblings("div")
 
