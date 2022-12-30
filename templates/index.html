@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title> {{ title }} </title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  </head>
+  <body>
+    <header></header>
+    
+    
+    <main>
+      <div class="row justify-content-md-left">
+      <div class="col">
+      <div class="card">
+      <div class="card-body">
+      <div class="mast">{{ data["date_text"] }}</div>
+      <div class="sub-mast">{{ data["date_tamil"] }}</div>
+      <div class="date-details">{{ data["tamil_date_details"] }}</div>
+          <table>
+          <tr>
+            <th scope="row">Sunrise</th>
+            <td>{{ data["Sunrise"] }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Sunset</th>
+            <td>{{ data["Sunset"] }}</td>
+          </tr>
+          </table>
+          
+         <table>
+          <tr>
+            <th scope="row">Nakshatram</th>
+            <td>{{ data["Nakshathram"] }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Thithi</th>
+            <td>{{ data["Tithi"] }}</td>
+          </tr>
+          </table>
+        <table>
+          <tr>
+            <th scope="row">Rahu</th>
+            <td>{{ data["Rahu Kalam"] }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Gulikai</th>
+            <td>{{ data["Gulikai Kalam"] }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Yamagandam</th>
+            <td>{{ data["Yamaganda"] }}</td>
+          </tr>
+      </table>
+      </div>
+      </div>
+      </div>
+      </div>
+    </main>
+      
+    <footer>
+    
+      <form method="POST">
+      <div class="row justify-content-md-center"">
+        <div class="col-6 col-md-6 justify-content-md-center">
+            <div class="btn-group" role="group">
+              <input type="date" name="date" value="{{ data['str_date'] }}">
+              <input type="submit" name="go" value="Go" class="btn btn-primary btn-lg btn-block">
+            </div>
+            
+            <div class="btn-group" role="group">
+              <input type="submit" name="previous" value="Previous" class="btn btn-secondary btn-lg btn-block">
+              
+              <input type="submit" name="today" value="Today" class="btn btn-primary btn-lg btn-block">
+              <input type="submit" name="next" value="Next" class="btn btn-secondary btn-lg btn-block">
+            </div>
+        </div>
+      </div>
+      </form>
+    </footer>
+  </body>
+</html>
