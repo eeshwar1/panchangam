@@ -28,8 +28,10 @@ class PanchangamView(FlaskView):
         else:
             
             strDate = request.form.get('date')
+            strPickedDate = request.form.get('picked-date')
             
             dateValue = datetime.strptime(strDate, "%Y-%m-%d").date()
+            pickedDateValue = datetime.strptime(strPickedDate, "%Y-%m-%d").date()
             
             if request.form.get('previous') == "Previous":
                #  print("previous")
@@ -42,7 +44,7 @@ class PanchangamView(FlaskView):
                 self.date = date.today()
             elif request.form.get('go') == "Go":
                #  print("go")
-                self.date = dateValue
+                self.date = pickedDateValue
                     
             
             response_data = self.fetch_data()
