@@ -3,16 +3,20 @@ version: '3.8'
 services:
   web:
     build: ./services/web
-    command: gunicorn --bind 0.0.0.0:8002 wsgi:app
+    command: gunicorn --bind 0.0.0.0:5000 wsgi:app
+    environment:
+        TZ: "America/Chicago"
     volumes:
       - ./services/web:/usr/src/app/
     expose:
-      - 8002
+      - 5000
     env_file:
       - ./.env.prod
       
   nginx:
     build: ./services/nginx
+    environment:
+        TZ: "America/Chicago"
     ports: 
         - 1337:80
     depends_on:
