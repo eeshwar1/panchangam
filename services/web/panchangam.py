@@ -11,10 +11,16 @@ app = Flask(__name__)
 class PanchangamView(FlaskView):
 
     root_base = "/"
-    URL = "https://www.drikpanchang.com/tamil/tamil-month-panchangam.html?geoname-id=4684888&date="
-    dataItems = ["Sunrise","Sunset","Nakshathram","Tithi",
-                 "Rahu Kalam","Gulikai Kalam","Yamaganda"]
+    URL_BASE = "https://www.drikpanchang.com/tamil/tamil-month-panchangam.html?"
+    dataItems = ["Sunrise","Sunset","Shaka Samvat","Nakshathram","Tithi",
+                 "Rahu Kalam","Gulikai Kalam","Yamaganda",]
     
+    locations = [   {"id": "5128581", "name": "New York, United States"},
+                    {"id": "4684888", "name": "Dallas, United States"},
+                    {"id": "5419384", "name": "Denver, United States"},
+                    {"id": "5368361", "name": "Los Angeles, United States"},
+                    {"id": "1254163", "name": "Thiruvananthapuram, India"},
+                    {"id": "2643743", "name": "London, United Kingdom"} ]
     
     @route("/",methods=['GET','POST'])
     def index(self):
@@ -22,11 +28,15 @@ class PanchangamView(FlaskView):
         if request.method == "GET":
         
             self.date = date.today()
+            self.location = "4684888"
+            self.URL=self.URL_BASE + "geoname-id="+ self.location + "&date="
             response_data = self.fetch_data()
-            
-        
+
         else:
             
+            self.location = request.form.get("location")
+            self.URL=self.URL_BASE + "geoname-id="+ self.location + "&date="
+
             strDate = request.form.get('date')
             strPickedDate = request.form.get('picked-date')
             
@@ -56,6 +66,7 @@ class PanchangamView(FlaskView):
     @route("json")
     def dailysheet(self):
         
+        self.date = date.today()
         response_data = self.fetch_data()
         
         response = app.response_class(
@@ -86,7 +97,17 @@ class PanchangamView(FlaskView):
         # self.date = date.today()
         
         return self.fetch_data_for_date(self.date)
+
+    def edit_tamil_date_details(self, detail_text):
+        idx = detail_text.find("Shaka Samvata")
         
+        if idx > 0:
+            edited_detail_text = detail_text[:idx - 5] + (detail_text[idx + 13:])
+        else:
+            edited_detail_text = detail_text
+
+        return edited_detail_text
+      
     def fetch_data_for_date(self, date):
         
         self.date = date
@@ -127,12 +148,17 @@ class PanchangamView(FlaskView):
         for div in detailDivs:
             textTamilDateDetails += div.text + " "
             
-        response["tamil_date_details"] = textTamilDateDetails
+        response["tamil_date_details"] = self.edit_tamil_date_details(textTamilDateDetails)
+        response["geo_location"] = self.location
+        response["last_refresh"] = datetime.now().strftime("%m/%d/%Y %I:%M:%S %p")
         
+        response["locations"] = self.locations
+        response["num_locations"] = len(self.locations)
+
         self.dataValues = []
         
         for item in self.dataItems:
-            item_data = self.find_data(item)
+            item_data = self.find_data(item)    
             self.dataValues.append(item_data)
             
             response[item] = item_data
@@ -153,8 +179,9 @@ class PanchangamView(FlaskView):
             return_text += span.text
             
         return return_text
-   
-
+    
+    
+    
 PanchangamView.register(app, route_base="/")
     
 if __name__ == "__main__":
