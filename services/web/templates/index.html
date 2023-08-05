@@ -7,10 +7,11 @@
         window.location = window.location.href;
         
       }
-      setInterval('autoRefresh()', 3600000);
+      setInterval('autoRefresh()', 1800000);
     </script>
     <title> {{ title }} </title>
     
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     
@@ -71,6 +72,36 @@
           </tr>
           </table>
           </div>
+        
+          <div class="accordion" id="accordionMuhurtham">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseMuhurtham" aria-expanded="false" aria-controls="flush-collapseMuhurtham">
+                    Gowri Panchangam
+                  </button>
+                </h2>
+            <div id="flush-collapseMuhurtham" class="accordion-collapse collapse" data-bs-parent="#accordionMuhurtham">
+              <table class="table table-sm table-borderless">
+              {% for j in range(0,2) %}
+                <tr>
+                  {% for i in range(0, data["gowri_details"][j]["muhurtham_list"]|length) %}
+                   {% if data['gowri_details'][j]['muhurtham_list'][i]['tag'] == 'good' %} 
+                      <td class="table-success">
+                    {% else %}
+                      <td class="table-danger">
+                    {% endif %}
+                    
+                      <h6>{{ data['gowri_details'][j]['muhurtham_list'][i]['name'] }}</h6>
+                      {{ data['gowri_details'][j]['muhurtham_list'][i]['time'] }}
+                  </td>     
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+              </table>
+            </div>
+          </div>
+          
+         
           <div class="row">
             <div>Last refreshed at {{ data["last_refresh"] }}</div>
           </div>
@@ -85,32 +116,32 @@
     <footer>
       
       <form method="POST">
-      <div class="row justify-content-md-center"> 
-        <div class="col col-md-4 justify-content-md-center">
+      <div class="row gy-2 justify-content-md-center"> 
+          <div class="col col-md-auto">
           <select class="form-select form-select-lg" id="location" name="location">
-            {% for i in range(0, data["num_locations"])%}
+            {% for i in range(0, data["locations"]|length)%}
               <option value="{{ data['locations'][i]['id'] }}" 
                 {% if data['geo_location'] == data['locations'][i]['id']: %} selected {% endif %}>
                   {{ data['locations'][i]['name'] }}
               </option>
             {% endfor %}
           </select>
-        </div>
-        <div class="col col-md-3 justify-content-md-center">
-          <div class="btn-group" role="group">       
-            <input type="date" name="picked-date" value="{{ data['str_date'] }}">
-            <input type="submit" name="go" value="Go" class="btn btn-primary btn-lg btn-block">
           </div>
-        </div>
-              
+    
+          <div class="col col-4"> 
+            <div class="btn-group" role="group">       
+              <input type="date" name="picked-date" value="{{ data['str_date'] }}">
+              <input type="submit" name="go" value="Go" class="btn btn-primary btn-lg btn-block">
+            </div>
+          </div>              
         <input type="hidden" name="date" value="{{ data['str_date'] }}">
-        <div class="col col-md-3">
+          <div class="col col-4">
           <div class="btn-group" role="group">     
             <input type="submit" name="previous" value="Previous" class="btn btn-secondary btn-lg btn-block">
             <input type="submit" name="today" value="Today" class="btn btn-primary btn-lg btn-block">
             <input type="submit" name="next" value="Next" class="btn btn-secondary btn-lg btn-block">
           </div>
-        </div>
+          </div>
       </div>
       </form>
       
