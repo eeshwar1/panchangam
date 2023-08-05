@@ -75,6 +75,9 @@ def __fetch_data_from_web(date, location):
     for item in dataItems:
         item_data = __find_data_web(soup, item)
         
+        if item == "Tithi":
+            item_data = __tamil_to_tamizh(item_data)
+
         response[item] = item_data
     
     shaka_samvat = __find_data_web(soup, "Shaka Samvat")
@@ -111,7 +114,7 @@ def __edit_tamil_date_details(detail_text):
     else:
         edited_detail_text = detail_text
 
-    return (edited_detail_text.strip(), yugam)
+    return (__tamil_to_tamizh(edited_detail_text.strip()), yugam)
 
 def get_page_data(URL_string):
 
@@ -208,6 +211,34 @@ def __get_muhurtham_data(muhurthamCard):
     
     muhurthamDataItem["muhurtham_list"]  = muhurthamList
     return muhurthamDataItem
+
+def __tamil_to_tamizh(text):
+
+    output_text = text
+    __tithi_mapping = { 
+            "Pirathamai": "Prathamai",
+            "Thuthiyai": "Dwithiyai",
+            "Thiruthiyai": "Thrithiyai",
+            "Sathurthi": "Chathurthi",
+            "Panjami": "Panchami",
+            "Shasti": "Shashti",
+            "Sapthami": "Sapthami",
+            "Astami": "Ashtami",
+            "Navami": "Navami",
+            "Thasami": "Dashami",
+            "Egadashi": "Ekadashi",
+            "Duvadasi": "Dwadashi",
+            "Thirayodasi": "Thrayodashi",
+            "Sathuradasi": "Chathurdashi",
+            "Pournami": "Pournami",
+            "Amavasai": "Ammavasai"
+
+    }
+
+    for word, replacement in __tithi_mapping.items():
+        output_text = output_text.replace(word, replacement)
+
+    return output_text
 
 if __name__ == "__main__":
   data = get_details()
