@@ -5,10 +5,10 @@ services:
     build:
         context: ./services/web
         dockerfile: Dockerfile
-    command: flask run -h 0.0.0.0
+    command: flask run -h 0.0.0.0 -p 8000
     volumes:
       - ./services/web:/usr/src/app/
     ports:
-      - 5000:8002
+      - 5001:8000
     env_file:
       - ./.env.dev
