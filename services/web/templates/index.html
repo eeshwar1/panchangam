@@ -84,7 +84,7 @@
               <table class="table table-sm table-borderless">
               {% for j in range(0,2) %}
                 <tr>
-                  {% for i in range(0, data["gowri_details"][j]["muhurtham_list"]|length) %}
+               		{% for i in range(0, data["gowri_details"][j]["muhurtham_list"]|length) %}
                    {% if data['gowri_details'][j]['muhurtham_list'][i]['tag'] == 'good' %} 
                       <td class="table-success">
                     {% else %}

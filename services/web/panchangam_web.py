@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_classful import FlaskView, route
 from datetime import date, datetime, timedelta
 from bs4 import BeautifulSoup
 import requests
 import json
 
-import panchangam
+from panchangam import panchangam
 
 app = Flask(__name__)
     
@@ -87,6 +87,11 @@ class PanchangamView(FlaskView):
         
         return response
     
+    @route("/favicon.ico", methods=["GET"])
+    def favicon(self):
+        return send_from_directory(app.root_path, 'static/favicon.ico',
+                                   mimetype='image/vnd.microsoft.icon')
+
     @route("<strdate>",methods=['GET','POST'])
     @route("<strdate>/json",methods=['GET','POST'])
     def dailysheet_for_date(self, strdate):
